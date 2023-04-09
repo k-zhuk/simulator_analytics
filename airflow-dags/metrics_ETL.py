@@ -3,7 +3,6 @@ import pandahouse as ph
 import seaborn as sns
 
 from airflow.decorators import dag, task
-from airflow.operators.python import get_current_context
 from datetime import datetime, timedelta
 import pandas as pd
 
@@ -165,13 +164,6 @@ def kzhuk_783444_dag_29_03():
         
         return info_df_fill
     
-    connection = {
-        'host': 'https://clickhouse.lab.karpov.courses',
-        'password': 'xxx',
-        'user': 'xxx',
-        'database': 'xxx'
-    }
-    
     @task
     def get_statistica_yesterday_df(gender: 'DataFrame', os: 'DataFrame', age: 'DataFrame') -> 'DataFrame':
         
@@ -182,7 +174,7 @@ def kzhuk_783444_dag_29_03():
         return statistica_yesterday
     
     @task
-    def update_db(result: 'DataFrame') -> 'DataFrame':
+    def update_db(result: 'DataFrame'):
         
         push_connection = {
             'host': 'https://clickhouse.lab.karpov.courses',
@@ -214,6 +206,12 @@ def kzhuk_783444_dag_29_03():
             ph.execute(query=create_table_query, connection=push_connection)
             ph.to_clickhouse(df=result, index=False, table='kzhuk_dag_783444', connection=push_connection)
     
+    connection = {
+        'host': 'https://clickhouse.lab.karpov.courses',
+        'password': 'xxx',
+        'user': 'xxx',
+        'database': 'xxx'
+    }
     
     # получаем всех уникальных пользователей
     # чтобы сделать срезы по полу, ОС и возрасту
