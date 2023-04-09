@@ -1,0 +1,14 @@
+select
+  toStartOfFifteenMinutes(toDateTime(time)) as time,
+  os,
+  uniqExact(user_id) as active_users
+from
+  simulator_20230220.feed_actions
+where
+  time >= today() - 3
+  and time != toStartOfFifteenMinutes(now())
+group by
+  time,
+  os
+order by
+  time desc

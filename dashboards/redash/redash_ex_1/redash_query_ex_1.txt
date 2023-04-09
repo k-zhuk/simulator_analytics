@@ -1,0 +1,12 @@
+select
+  toStartOfFifteenMinutes(toDateTime(time)) as time,
+  count(user_id) as sent_messages
+from
+  simulator_20230220.message_actions
+where
+  time >= today() - 3
+  and time != toStartOfFifteenMinutes(now())
+group by
+  time
+order by
+  time

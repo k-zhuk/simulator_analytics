@@ -1,0 +1,18 @@
+   select count(user_id) as active_users,
+          toString(active_date) as active_date,
+          toString(start_date) as start_date
+   from
+     (select user_id,
+             min(toDate(time)) as start_date
+      from simulator_20230220.feed_actions
+      where source == 'ads'
+        AND toMonth(time) == (toMonth(today()) - 1)
+      group by user_id) t1
+   join
+     (select distinct user_id,
+                      toDate(time) as active_date
+      from simulator_20230220.feed_actions
+      where source == 'ads'
+        AND toMonth(time) == (toMonth(today()) - 1) ) t2 using user_id
+   group by active_date,
+            start_date
